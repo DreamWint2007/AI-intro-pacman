@@ -88,13 +88,47 @@ def depthFirstSearch(problem):
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    startstate = problem.getStartState()
+    Frontier = util.Stack()
+    Frontier.push((startstate, []))
+    Visited = []
 
+    while not Frontier.isEmpty():
+        state, actions = Frontier.pop()
+        if problem.isGoalState(state):
+            return actions
+        if state not in Visited:
+            Visited.append(state)
+            for next in problem.getSuccessors(state):
+                n_state = next[0]
+                n_direction = next[1]
+                Frontier.push((n_state, actions + [n_direction]))
+
+    raise Exception("No solution")
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    Frontier = util.Queue()
+    Visited = []
+    Frontier.push( (problem.getStartState(), []) )
+    #print 'Start',problem.getStartState()
+    Visited.append( problem.getStartState() )
+
+    while Frontier.isEmpty() == 0:
+        state, actions = Frontier.pop()
+        if problem.isGoalState(state):
+            #print 'Find Goal'
+            return actions 
+        for next in problem.getSuccessors(state):
+            n_state = next[0]
+            n_direction = next[1]
+            if n_state not in Visited:
+                
+                Frontier.push( (n_state, actions + [n_direction]) )
+                Visited.append( n_state )
+
+    raise Exception("No solution")
     
 #! 例题答案如下
 # def breadthFirstSearch(problem):
