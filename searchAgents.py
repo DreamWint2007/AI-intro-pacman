@@ -377,14 +377,20 @@ def cornersHeuristic(state, problem):
     shortest path from the state to a goal of the problem; i.e.  it should be
     admissible (as well as consistent).
     """
-    corners = problem.corners # These are the corner coordinates
-    walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
+    corners = problem.corners 
+    walls = problem.walls 
     node = state[0]
     Visited_Corners = state[1]
     h_sum = 0
 
     "*** YOUR CODE HERE ***"
-    return h_sum # Default to trivial solution
+    unvisited = [corner for corner in corners if corner not in Visited_Corners]
+    if not unvisited:
+        return 0
+
+    h_sum = max(abs(node[0] - corner[0]) + abs(node[1] - corner[1])
+                for corner in unvisited)
+    return h_sum 
 
 
 class AStarCornersAgent(SearchAgent):
