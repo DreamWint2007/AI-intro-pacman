@@ -377,20 +377,44 @@ def cornersHeuristic(state, problem):
     shortest path from the state to a goal of the problem; i.e.  it should be
     admissible (as well as consistent).
     """
-    corners = problem.corners 
-    walls = problem.walls 
+    corners = problem.corners
     node = state[0]
     Visited_Corners = state[1]
-    h_sum = 0
 
     "*** YOUR CODE HERE ***"
     unvisited = [corner for corner in corners if corner not in Visited_Corners]
     if not unvisited:
         return 0
 
-    h_sum = max(abs(node[0] - corner[0]) + abs(node[1] - corner[1])
-                for corner in unvisited)
-    return h_sum 
+    def manhattan(a, b):
+        return abs(a[0] - b[0]) + abs(a[1] - b[1])
+
+    # Lower bound to reach the remaining corners: first reach one corner,
+    # then connect all remaining corners with an MST cost.
+    min_to_unvisited = min(manhattan(node, corner) for corner in unvisited)
+
+    if len(unvisited) == 1:
+        return min_to_unvisited
+
+    remaining = set(unvisited)
+    tree_nodes = {remaining.pop()}
+    mst_cost = 0
+
+    while remaining:
+        best_dist = None
+        best_corner = None
+        for in_tree in tree_nodes:
+            for out_tree in remaining:
+                dist = manhattan(in_tree, out_tree)
+                if best_dist is None or dist < best_dist:
+                    best_dist = dist
+                    best_corner = out_tree
+
+        mst_cost += best_dist
+        tree_nodes.add(best_corner)
+        remaining.remove(best_corner)
+
+    return min_to_unvisited + mst_cost
 
 
 class AStarCornersAgent(SearchAgent):
